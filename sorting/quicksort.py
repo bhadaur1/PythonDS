@@ -44,51 +44,90 @@ def __quicksortHelper__(arr, lo, hi):
     """
     if lo >= hi:
         return
-    pivotindx = __partition2way__(arr, lo, hi)
-    __quicksortHelper__(arr, lo, pivotindx - 1)
-    __quicksortHelper__(arr, pivotindx + 1, hi)
+    lt, gt = __partition3way__(arr, lo, hi)
+    __quicksortHelper__(arr, lo, lt - 1)
+    __quicksortHelper__(arr, gt + 1, hi)
 
 
 def __partition2way__(arr, lo, hi):
     """
     Function to achieve 2-way partitioning for quicksort
-    Start with 2 pointers i and j, choose first element as pivot
-    In each iteration, do the following in order:
-        (a) Increment i until arr[i] >= arr[lo]
-        (b) Decrement j until arr[j] <= arr[lo]
-        (c) Check if pointers have crossed (j<=i), 
-                if yes then swap arr[lo] with arr[j] and break out
-        (d) If pointers didn't cross, then swap arr[i] with arr[j]
-    Return the index of the pivot (j) so that it can be used by __quicksortHelper__
+    1. Start with 2 pointers lt and gt, choose first element (lo) as pivot
+    2. Invariant: everything to the left of lt is less than pivot, right of gt is larger than pivot
+    3. In each iteration, do the following in order:
+        (a) Increment lt until arr[lt] >= arr[lo]
+        (b) Decrement gt until arr[gt] <= arr[lo]
+        (c) Check if pointers have crossed (gt<=lt), 
+                if yes then swap arr[lo] with arr[gt] and break out
+        (d) If pointers didn't cross, then swap arr[lt] with arr[gt]
+    4. Return the index of the pivot (now gt) so that it can be used by __quicksortHelper__
     """
 
-    if len(arr) < 2:
-        return arr
+    if lo >= hi:
+        return
 
-    # Define i and j pointers
-    i = lo
-    j = hi + 1
+    # Define lt and gt pointers
+    lt = lo
+    gt = hi + 1
 
     while True:
-        while i < hi:
-            i += 1
-            if arr[i] >= arr[lo]:
-                # print("Break i at ", i)
+        while lt < hi:
+            lt += 1
+            if arr[lt] >= arr[lo]:
+                # print("Break lt at ", lt)
                 break
 
-        while j > lo:
-            j -= 1
-            if arr[j] < arr[lo]:
-                # print("Break j at ", j)
+        while gt > lo:
+            gt -= 1
+            if arr[gt] < arr[lo]:
+                # print("Break gt at ", gt)
                 break
 
-        if j <= i:
-            arr[lo], arr[j] = arr[j], arr[lo]
+        if gt <= lt:
+            arr[lo], arr[gt] = arr[gt], arr[lo]
             break
 
-        if arr[i] > arr[j]:
-            # print(f"swap {arr[i]} with {arr[j]}")
-            arr[i], arr[j] = arr[j], arr[i]
+        if arr[lt] > arr[gt]:
+            # print(f"swap {arr[lt]} with {arr[gt]}")
+            arr[lt], arr[gt] = arr[gt], arr[lt]
         # print(arr)
 
-    return j
+    return gt
+
+
+def __partition3way__(arr, lo, hi):
+    """
+    Function to achieve 3-way partitioning for quicksort
+    1. Start with 3 pointers (lt, i, gt), choose first element (lo) as pivot
+    2. Invariant: everything to the
+        (a) left of lt is less than pivot
+        (b) between lt and i is equal to pivot
+        (c) right of gt is larger than pivot
+    3. In each iteration, while i<gt do from left to right :
+        (a) if arr[i] < arr[lo] exchange arr[lt] and arr[i], increment lt and i
+        (b) if arr[i] == arr[lo] increment only i
+        (b) if arr[i] > arr[lo] exchange arr[gt] and arr[i], decrement gt 
+    4. Return lt, gt
+    """
+
+    if hi <= lo:
+        return
+
+    # Define lt and gt pointers
+    lt = lo
+    i = lt + 1
+    gt = hi
+    v = arr[lo]
+
+    while i <= gt:
+        if arr[i] < v:
+            arr[i], arr[lt] = arr[lt], arr[i]
+            i += 1
+            lt += 1
+        elif arr[i] > v:
+            arr[i], arr[gt] = arr[gt], arr[i]
+            gt -= 1
+        else:
+            i += 1
+
+    return lt, gt
