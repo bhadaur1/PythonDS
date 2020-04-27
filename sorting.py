@@ -1,11 +1,15 @@
 import random
 from timeit import repeat
 import math
-from mergesort import mergesort_iterative, mergesort_recursive
-from quicksort import quicksort_inplace, quicksort_recursive
-from insertionsort import insertionsort
-from bubblesort import bubblesort
-from selectionsort import selectionsort
+from sorting import (
+    mergesort_iterative,
+    mergesort_recursive,
+    quicksort_inplace,
+    quicksort_recursive,
+    insertionsort,
+    bubblesort,
+    selectionsort,
+)
 
 
 ARRAY_LENGTH = 10000
@@ -27,6 +31,7 @@ if __name__ == "__main__":
     # run_sorting_algorithm(algorithm="selectionsort", array=array)
     random.shuffle(array)
     print(mergesort_iterative(array.copy()) == quicksort_inplace(array.copy()))
+    run_sorting_algorithm(algorithm="sorted", array=array.copy())
     run_sorting_algorithm(algorithm="mergesort_recursive", array=array.copy())
     run_sorting_algorithm(algorithm="mergesort_iterative", array=array.copy())
     run_sorting_algorithm(algorithm="quicksort_recursive", array=array.copy())
