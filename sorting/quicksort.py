@@ -111,7 +111,7 @@ def __partition3way__(arr, lo, hi):
     """
 
     if hi <= lo:
-        return
+        return lo, hi
 
     # Define lt and gt pointers
     lt = lo
