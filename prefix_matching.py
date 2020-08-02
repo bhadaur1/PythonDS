@@ -1,17 +1,19 @@
 """
 Given a vocabulary list and a query, find all words that are in the vocabulary
 
-vocabulary = ["kit", "king", "cat", "dog", "can"]
+vocabulary = ["kit", "king", "cat", "dog", "can", "kangaroo", "kin"]
 query = "ki"
 
-returns = ["kit", "king"]
+returns = ['kit', 'kin', 'king']
 """
+
+from typing import List
 
 
 class TrieNode(object):
     def __init__(self, val=None, isword=False) -> None:
         self.val = val
-        self.children = list()
+        self.children = set()
         self.isword = isword
 
     def __repr__(self) -> str:
@@ -23,13 +25,13 @@ class Trie(object):
     def __init__(self):
         self.head = TrieNode()
 
-    def addword(self, word):
+    def add_word_to_vocabulary(self, word) -> None:
 
         """
         Add a word to the trie by moving char by char
         """
 
-        def addchar(char, curr):
+        def addchar(char, curr) -> TrieNode:
             """
             Inner function
             Adds a char to the trie
@@ -41,7 +43,7 @@ class Trie(object):
                     return child
             # print(f"Creating newnode with {char}")
             newnode = TrieNode(char)
-            curr.children.append(newnode)
+            curr.children.add(newnode)
             return newnode
 
         # Adding word here
@@ -50,19 +52,19 @@ class Trie(object):
             curr = addchar(char, curr)
         curr.isword = True
 
-    def getallwords(self, query):
+    def get_word_beginning_with(self, query) -> List:
 
-        words = [] # The answer
-        slate = list(query) # temp cache to append chars to
+        words = []  # The answer
+        slate = list(query)  # temp cache to append chars to
         curr = self.head
 
-        def movebychar(char, curr):
+        def movebychar(char, curr) -> TrieNode:
             for child in curr.children:
                 if child.val == char:
                     return child
-            return None # Couldn't find child, return None
+            return None  # Couldn't find child, return None
 
-        def add_word_with_dfs(curr):
+        def add_word_with_dfs(curr) -> None:
             if curr is None:
                 return
             if curr.isword:
@@ -72,7 +74,7 @@ class Trie(object):
                 if child is not None:
                     slate.append(child.val)
                     add_word_with_dfs(child)
-                    slate.pop() # remember to pop the slate to be consistent with recursion stack pops
+                    slate.pop()  # remember to pop the slate to be consistent with recursion stack pops
 
         # Find subtree that begins with last query character
         for char in query:
@@ -90,17 +92,17 @@ class Trie(object):
 
 if __name__ == "__main__":
     trie = Trie()
-    vocabulary = ["kit", "king", "cat", "dog", "can"]
+    vocabulary = ["kit", "king", "cat", "dog", "can", "kangaroo", "kin"]
     query = "ki"
 
     # Insert into trie
     for word in vocabulary:
-        trie.addword(word)
+        trie.add_word_to_vocabulary(word)
 
     # all words beginning with "ki"
-    print(trie.getallwords("ki"))
-    # >>> ['kit', 'king']
+    print(trie.get_word_beginning_with("ki"))
+    # >>> ['kit', 'kin', 'king']
 
     # all words beginning with "ca"
-    print(trie.getallwords("ca"))
+    print(trie.get_word_beginning_with("ca"))
     # >>> ['cat', 'can']
